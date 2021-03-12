@@ -1,0 +1,211 @@
+---
+title: "Exercises Chapter 9"
+author: "Semiramis Castro-Jaimes"
+date: "22/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr)
+```
+## Use as_mapper() to explore how purrr generates anonymous functions for the integer, character, and list helpers.
+```{r}
+as_mapper(c(1,2))
+```
+```{r}
+as_mapper(c("hi", "there"))
+```
+```{r}
+as_mapper(list(c(1,2), c("hi", "there")))
+```
+
+A: as_mapper() creates an "extractor" function by calling purrr::pluck()
+Note: pluck() returns NULL when an element does not exist.
+
+## `map(1:3, ~ runif(2))` is a useful pattern for generating random numbers, but `map(1:3, runif(2))` is not. Why not? Can you explain why it returns the result that it does?
+```{r}
+map(1:3, ~ runif(2))
+```
+Here, we ran three times runif(n=2) so we had two random numbers in each iteration.
+"Internally map() applies as_mapper() to this formula, which converts ~ runif(2) into an anonymous function."
+
+
+```{r}
+map(1:3, runif(2))
+```
+A: Here, runif(2) is evaluated once, and pluck() tries to map its values to the indexes, but pluck() returned NULL each time "because no values corresponding to the index can be found"
+
+
+## Use the appropriate `map()` function to:
+### -Compute the standard deviation of every column in a numeric data frame.
+```{r}
+df <- data.frame(col1=runif(5), col2=runif(5), col3=runif(5))
+map_dbl(df, sd)
+```
+
+### -Compute the standard deviation of every numeric column in a mixed data frame. (Hint: you’ll need to do it in two steps.)
+```{r}
+df <- data.frame(col1=runif(5), col2=runif(5), col3=runif(5),    
+                 col4=letters[1:5], col5=LETTERS[1:5], 
+                 stringsAsFactors = FALSE)
+selected_columns = map_lgl(df, is.numeric) 
+map_dbl(df[,selected_columns], sd)
+
+```
+
+### -Compute the number of levels for every factor in a data frame.
+```{r}
+df <- data.frame(f1=c(letters[6:10], letters[4:8]),  
+                 f2=c(LETTERS[10:14], LETTERS[13:17]),
+                 stringsAsFactors = TRUE)
+map_int(df, nlevels)
+```
+
+
+## The following code simulates the performance of a t-test for non-normal data. Extract the p-value from each test, then visualise.
+```{r}
+trials <- map(1:100, ~ t.test(rpois(10, 10), rpois(7, 10)))
+str(trials[[1]])
+```
+```{r}
+hist(trials %>% map_dbl("p.value"))
+```
+
+## The following code uses a map nested inside another map to apply a function to every element of a nested list. Why does it fail, and what do you need to do to make it work?
+
+```{r}
+x <- list(
+  list(1, c(3, 9)),
+  list(c(3, 6), 7, c(4, 7, 6))
+)
+
+triple <- function(x) x * 3
+```
+```{r eval=FALSE}
+map(x, map, .f = triple)
+#Error in .f(.x[[i]], ...) : unused argument (map)
+
+```
+```{r}
+map(x, map, triple)
+```
+We needed to omit the .f argument because it was interpreted as if it was the argument to the first map instead of the nested map
+
+
+## Use map() to fit linear models to the mtcars dataset using the formulas stored in this list:
+```{r}
+formulas <- list(
+  mpg ~ disp,
+  mpg ~ I(1 / disp),
+  mpg ~ disp + wt,
+  mpg ~ I(1 / disp) + wt
+)
+```
+```{r}
+results <- map(formulas, lm, data=mtcars) 
+results
+```
+
+
+## Fit the model mpg ~ disp to each of the bootstrap replicates of mtcars in the list below, then extract the R2 of the model fit (Hint: you can compute the R2 with summary().)
+```{r}
+bootstrap <- function(df) {
+  df[sample(nrow(df), replace = TRUE), , drop = FALSE]
+}
+
+bootstraps <- map(1:10, ~ bootstrap(mtcars))
+```
+
+```{r}
+map(bootstraps, ~lm(mpg ~ disp, data=.x)) %>% 
+  map(summary)  %>% 
+  map_dbl("r.squared")
+```
+
+
+## Explain the results of modify(mtcars, 1).
+```{r}
+modify(mtcars, 1)
+```
+We get the first row again and again for each row (n=32), and we get a data.frame because the input was a data.frame0
+
+
+## Explain how the following code transforms a data frame using functions stored in a list.
+```{r}
+trans <- list(
+  disp = function(x) x * 0.0163871,
+  am = function(x) factor(x, labels = c("auto", "manual"))
+)
+
+nm <- names(trans)
+mtcars[nm] <- map2(trans, mtcars[nm], function(f, var) f(var))
+head(mtcars[nm])
+```
+We apply the functions in the list 'trans' for each element in mtcars using an anonymous function. We use map2() because we give two arguments onto which we will iterate: trans and mtcars[nm]
+
+
+## Compare and contrast the map2() approach to this map() approach:
+```{r}
+
+mtcars[nm] <- map(nm, ~ trans[[.x]](mtcars[[.x]]))
+head(mtcars[nm])
+```
+Here we use the dot arguments and the function syntax: for each element in trans, we apply that function on each element of mtcars
+
+
+## What does write.csv() return? i.e. what happens if you use it with map2() instead of walk2()
+```{r}
+a<- write.csv(mtcars, file = "foo.csv", fileEncoding = "UTF-16LE")
+a
+```
+It returns NULL. If we use map2(), we would get a list of NULLs
+
+## Why isn’t is.na() a predicate function? What base R function is closest to being a predicate version of is.na()?
+It is not a predicate function because it does not return a single TRUE/FALSE value; it returns a logical vector of the same size as the input vector.
+
+
+## simple_reduce() has a problem when x is length 0 or length 1. Describe the source of the problem and how you might go about fixing it.
+```{r eval=FALSE}
+simple_reduce <- function(x, f) {
+  out <- x[[1]]
+  for (i in seq(2, length(x))) {
+    out <- f(out, x[[i]])
+  }
+  out
+}
+simple_reduce(c(1), sum)
+#Error in x[[i]] : subíndice fuera de  los límites
+
+```
+```{r}
+simple_reduce2 <- function(x, f) {
+  out <- x[[1]]
+  if (length(x) < 2) return("The input must have at least two elements")
+  for (i in seq(2, length(x))) {
+    out <- f(out, x[[i]])
+  }
+  out
+}
+simple_reduce2(c(1), sum)
+
+```
+We neeeded to add an if statement to check the length of the input vector because the loop starts from the second element
+
+
+## Implement the span() function from Haskell: given a list x and a predicate function f, span(x, f) returns the location of the longest sequential run of elements where the predicate is true. (Hint: you might find rle() helpful.)
+
+
+
+## Implement arg_max(). It should take a function and a vector of inputs, and return the elements of the input where the function returns the highest value. For example, arg_max(-10:5, function(x) x ^ 2) should return -10. arg_max(-5:5, function(x) x ^ 2) should return c(-5, 5). Also implement the matching arg_min() function.
+
+
+
+## The function below scales a vector so it falls in the range [0, 1]. How would you apply it to every column of a data frame? How would you apply it to every numeric column in a data frame?
+```{r}
+scale01 <- function(x) {
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+```
+

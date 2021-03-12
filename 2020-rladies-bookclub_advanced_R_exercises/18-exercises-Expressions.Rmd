@@ -1,0 +1,92 @@
+---
+title: "Exercises Chapter 18"
+author: "Semiramis Castro-Jaimes"
+date: "17/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rlang)
+library(lobstr)
+```
+
+## Reconstruct the code represented by the trees below
+```{r}
+lobstr::ast(
+  f(
+    g(h()), 1+2+3, (x+y) * z
+  )
+)
+```
+
+## What’s happening with the ASTs below?
+They are written in prefix form
+```{r}
+lobstr::ast(`x` + `y`); lobstr::ast(x ** y); lobstr::ast(1 -> x)
+```
+
+## What does the call tree of an if statement with multiple else if conditions look like? Why?
+```{r}
+lobstr::ast(
+  if(x > 10){
+    ...
+  }else if(x%%2 == 0){
+    ...
+  }else if(x * 50 < 35){
+    ...
+  }
+)
+```
+Because each condition is composed by one or more function calls; those functions are either comparison operators alone or comparison and arithmetic operators 
+
+
+## What happens when you subset a call object to remove the first element? e.g.
+```{r}
+expr(read.csv("foo.csv", header = TRUE))[-1]
+```
+The second element becomes the function's name because the first element of an expression is always the function to be called
+
+
+## rlang::call_standardise() doesn’t work so well for the following calls. Why? What makes mean() special?
+```{r eval=FALSE}
+call_standardise(quote(mean(1:10, na.rm = TRUE)))
+#> mean(x = 1:10, na.rm = TRUE)
+call_standardise(quote(mean(n = T, 1:10)))
+#> mean(x = 1:10, n = T)
+call_standardise(quote(mean(x = 1:10, , TRUE)))
+#> mean(x = 1:10, , TRUE)
+```
+```{r}
+mean
+```
+call_standardize() does not go well with ... arguments, and the second argument of mean is ...
+
+
+## Construct the expression if(x > 1) "a" else "b" using multiple calls to call2(). How does the code structure reflect the structure of the AST?
+```{r}
+call2("if", 
+      call2(">", expr(x), 1), "a", "b"
+)
+```
+```{r}
+lobstr::ast(if(x > 1) "a" else "b")
+```
+They are very similar
+
+## What happens if you call parse_expr() with a string that generates multiple expressions? 
+```{r eval=FALSE}
+parse_expr("x + 1; y + 1")
+# Error: More than one expression parsed
+```
+It throws an error; for multiple expressions we use parse_exprs()
+```{r}
+parse_exprs("x + 1; y + 1")
+```
+
+
+
+
+
+
+
