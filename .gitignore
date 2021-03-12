@@ -19,6 +19,7 @@
 
 # RStudio files
 .Rproj.user/
+.Rprofile
 
 # produced vignettes
 vignettes/*.html
@@ -37,3 +38,11 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Knitted rmd files
+*.html
+
+# Package management
+packrat
+renv
+renv.lock
