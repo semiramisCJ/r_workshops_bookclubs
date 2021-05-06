@@ -1,0 +1,416 @@
+---
+title: "Club de lectura - RLadies - Advanced R"
+subtitle: "Capítulo 8: Conditions"
+author: "Semiramis Castro"
+output: 
+  xaringan::moon_reader:
+    css: ["default", "rladies", "rladies-fonts"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    includes:
+      in_header: header.html
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(rlang)
+
+```
+
+background-image: url("https://media.giphy.com/media/44jJQXPAbvKfK/giphy.gif")
+background-position: 50% 50%
+class: top, inverse
+
+
+# RLadies 
+<a href="https://rladies.org/"><i class="fa fa-link fa-fw"></i>&nbsp; rladies.org</a><br>
+<a href="https://github.com/rladies/.github/blob/master/CODE_OF_CONDUCT.md#spanish"><i class="fa fa-link fa-fw"></i>&nbsp; Código de conducta</a><br>
+
+<br/><br/><br/>
+
+Me puedes encontrar en
+
+<a href="http://twitter.com/semiramis_cj"><i class="fa fa-twitter fa-fw"></i>&nbsp; @semiramis_cj</a><br>
+
+<br/>
+
+---
+# We signal conditions as developers: "The state of things is..."
+What would be the use cases? 
+
+- messages
+`r icon::fa("envelope")`
+```{r eval=FALSE}
+base::message("A message from the developer")
+rlang::inform("This is a message from your developer")
+```
+
+- warnings
+`r icon::fa("exclamation")`
+```{r eval=FALSE}
+base::warning("This is a warning!!")
+rlang::warn("You might want to fix this")
+```
+
+- errors 
+`r icon::fa("bomb")`
+```{r eval=FALSE}
+base::stop("An error occured!!!")
+rlang::abort("You MUST fix this!")
+```
+
+- interrupt (only in interactive mode): Ctrl+C, Esc
+
+---
+
+# We handle conditions as users: What is happening!?! How do I solve this?
+
+- Just ignore the signaling
+```{r eval=FALSE}
+try() # For errors
+suppressWarnings() # For warnings
+suppressMessages() # For messages
+```
+
+- Do something about it
+```{r eval=FALSE}
+tryCatch() # For errors
+withCallingHandlers() # For warnings and messages
+rlang::catch_cnd() # For any condition
+```
+
+---
+# We ignore errors with try()
+```{r}
+calculate_log_try <- function(x) {
+  # We catch an error if it occurs
+  try( log(x) )
+  # But we continue with the execution as if nothing happened
+  sum(1:5)   
+
+}
+calculate_log_try("a")
+```
+---
+# We can ignore warnings or messages selectively
+```{r}
+suppressWarnings({
+  warning("Uhoh!")
+  warning("Another warning")
+  1
+})
+
+suppressMessages({
+  message("Hello there")
+  2
+})
+
+
+suppressWarnings({
+  message("You can still see me because I am a message")
+  3
+})
+
+```
+---
+# catch_cnd()
+The easiest way to see a condition object is to catch one from a signalled condition. That’s the job of `rlang::catch_cnd()`
+```{r}
+cnd <- catch_cnd(stop("An error"))
+str(cnd)
+```
+---
+# Exiting handlers: 
+If we get an error, the downstream code will not be executed!! `r icon::fa("bomb")`
+```{r eval=FALSE}
+calculate_log_unprotected <- function(x, base=10){
+  log(x)
+  print("Finished with success!")
+}
+calculate_log_unprotected("10")
+# Error in log(x) : non-numeric argument to mathematical function
+```
+---
+
+# We can use tryCatch() to continue the execution
+```{r eval=FALSE}
+tryCatch(
+  message = function(any_error) "There was an error!",
+  expr=
+    {
+    log("x") # What we try to do
+    message("No errors found")
+  }
+)
+# Error in log("x") : non-numeric argument to mathematical function
+```
+
+
+---
+# We can also provide a default value when there is an error
+```{r }
+calculate_log_trycatch <- function(x, base) {
+  tryCatch(
+    error = function(any_error) NA, # NA will be our default value
+    expr = {
+    log(x, base) # What we want to do
+    message("No errors found!")
+    x + 1
+    }
+  )
+}
+```
+```{r}
+calculate_log_trycatch(10, 10) # When nothing fails
+```
+```{r}
+# This code runs uninterrupted even if there is an error
+calculate_log_trycatch("10", 10)
+```
+---
+# What if the execution must stop?
+We can signal with `base::stop()` or with `rlang::abort()` `r icon::fa("bomb")`
+```{r}
+calculate_log_verbose <- function(x, base = exp(1)) {
+  # Check our inputs, stop the execution if they are not valid
+  # But also tell the user where is the problem
+  if (!is.numeric(x)) {
+    abort(paste0(
+      "`x` must be a numeric vector; not ", typeof(x), "."
+    ))
+  }
+  if (!is.numeric(base)) {
+    abort(paste0(
+      "`base` must be a numeric vector; not ", typeof(base), "."
+    ))
+  }
+  # We can run this if there are no errors
+  log(x, base = base)
+}
+```
+
+```{r eval=FALSE}
+calculate_log_verbose(letters)
+## Error: `x` must be a numeric vector; not character.
+calculate_log_verbose(1:10, base = letters)
+## Error: `base` must be a numeric vector; not character.
+calculate_log_verbose(1:5, base = 10) # This code runs without problems
+# [1] 0.0000000 0.3010300 0.4771213 0.6020600 0.6989700
+```
+
+---
+# Calling handlers
+If what happened is not critical, and we want to continue with the flow of our script, we can use `withCallingHandlers()`
+
+The messages are applied in the order we send them
+```{r}
+withCallingHandlers(
+  # We catch the condition and print to the console
+  message = function(cnd) message("First message -from the top with base"),
+  {
+    # This code will be executed after catching the condition
+    # After each message, the control will return to the top
+    rlang::inform("Second message with rlang")
+    rlang::warn("Ooops! A warning")
+    message("Third message -with base")
+  }
+)
+```
+---
+
+# Custom conditions are useful for not relying on string matching to catch them! 1/2
+We create our custom condition "abort_bad_argument"
+```{r}
+abort_bad_argument <- function(arg, must, not = NULL) {
+  msg <- glue::glue("`{arg}` must {must}") # This text might change
+  if (!is.null(not)) {
+    not <- typeof(not)
+    msg <- glue::glue("{msg}; not {not}.")
+  }
+  abort("error_bad_argument", 
+    message = msg, 
+    arg = arg, 
+    must = must, 
+    not = not
+  )
+}
+
+log_custom_condition <- function(x, base = 10) {
+  if (!is.numeric(x)) {
+    # We are using our custom condition!
+    abort_bad_argument("x", must = "be numeric", not = x)
+  }
+  if (!is.numeric(base)) {
+    abort_bad_argument("base", must = "be numeric", not = base)
+  }
+
+  log(x, base = base)
+}
+  
+```
+---
+# Custom conditions are useful for not relying on string matching to catch them! 2/2
+
+```{r}
+tryCatch(
+  error_bad_argument = function(cnd) "bad_argument",
+  log_custom_condition("x")
+)
+```
+```{r}
+tryCatch(
+  error_bad_argument = function(cnd) "bad_argument",
+  log_custom_condition(-1)
+)
+```
+
+---
+# What if I want similar behavior as python's try-except?
+- We can "manage" the errors as if we were in another languague
+(such as python) assigning the try or tryCatch block to a variable and checking if the result inherits from
+
+```{r}
+try_to_calc_log <- try(
+  log("x")
+)
+if(inherits(try_to_calc_log, "try-error")){
+  # Do something about it
+  print("We will manage this case accordingly")
+}
+
+```
+
+
+---
+background-image: url("https://media.giphy.com/media/bt8FwKXiNKRkQ/giphy.gif")
+background-position: 50% 50%
+class: center
+
+# Time for a break!
+---
+# Quizz
+1. What are the three most important types of condition?
+
+2. What function do you use to ignore errors in block of code?
+
+3. What’s the main difference between `tryCatch()` and `withCallingHandlers()`?
+
+4. Why might you want to create a custom error object?
+
+---
+# Quizz - answers
+What are the three most important types of condition?
+- errors, warnings & messages
+
+What function do you use to ignore errors in block of code?
+- `try()` or `tryCatch()`
+
+What’s the main difference between `tryCatch()` and `withCallingHandlers()`?
+- `tryCatch()` handles errors
+- `withCallingHandlers()` is for warnings and messages
+
+Why might you want to create a custom error object?
+- To avoid comparison of error strings when we want to catch specific types of errors
+
+---
+## Predict the results of evaluating the following code:
+```{r }
+show_condition <- function(code) {
+  tryCatch(
+    # Errors, warnings and messages are catched from the start
+    error = function(cnd) "error",
+    warning = function(cnd) "warning",
+    message = function(cnd) "message",
+    # Our code is executed here
+    {
+    code
+    NULL # The return value if nothing was signaled
+    }
+  )
+}
+
+```
+```{r eval=FALSE}
+show_condition(stop("!")) # case A)
+show_condition(10) # case B)
+show_condition(warning("?!")) # case C)
+show_condition({ # case D)
+  10
+  message("?")
+  warning("?!")
+})
+```
+---
+
+```{r eval=TRUE}
+show_condition(stop("!")) # case A)
+show_condition(10) # case B)
+show_condition(warning("?!")) # case C)
+show_condition({ # case D)
+  10
+  message("?")
+  warning("?!")
+})
+```
+- Note: case D will terminate when we arrive to the message. Remember: exiting handlers are called in the context of tryCatch()
+
+---
+# Why is catching interrupts dangerous? Run this code to find out.
+```{r}
+bottles_of_beer <- function(i = 99) {
+  message(
+    "There are ", i, " bottles of beer on the wall, ", 
+    i, " bottles of beer."
+  )
+  while(i > 0) {
+    tryCatch(
+      Sys.sleep(1),
+      interrupt = function(err) {
+        i <<- i - 1
+        if (i > 0) {
+          message(
+            "Take one down, pass it around, ", i, 
+            " bottle", if (i > 1) "s", " of beer on the wall."
+          )
+        }
+      }
+    )
+  }
+  message(
+    "No more bottles of beer on the wall, ", 
+    "no more bottles of beer."
+  )
+}
+```
+---
+## Answer:
+If we run that code, we won't be able to stop it unless we kill the process from our terminal (or process manager)
+
+<img src="presentation_images/htopkill.png">
+
+---
+background-image: url("https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif")
+background-position: 50% 50%
+class: bottom, inverse
+
+# Do you want to explore more about debugging in R?
+
+- Check <a href="https://rstudio.com/resources/rstudioconf-2020/object-of-type-closure-is-not-subsettable/"><i class="fa fa-link fa-fw"></i>&nbsp; Jenny Bryan's talk: "Object of type closure is not subsettable" </a><br>
+
+- Check <a href="https://stackoverflow.com/questions/12193779/how-to-write-trycatch-in-r"><i class="fa fa-link fa-fw"></i>&nbsp; How-to Try-catch @stackoverflow" </a><br>
+
+---
+
+class: center, top, inverse
+background-image: url("https://media.giphy.com/media/T5nP7Nwu5FzMc/giphy.gif")
+background-position: 50% 50%
+
+# ¡Nos vemos!
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+Diapositivas creadas con el paquete de R [**xaringan**](https://github.com/yihui/xaringan).
+
+
+---
