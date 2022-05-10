@@ -47,3 +47,6 @@ renv.lock
 # node
 node_modules
 package-lock.json
+
+# Pending projects
+2020_09-rladies-latinr_emoji_app/
