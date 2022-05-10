@@ -43,3 +43,7 @@ vignettes/*.pdf
 packrat
 renv
 renv.lock
+
+# node
+node_modules
+package-lock.json
