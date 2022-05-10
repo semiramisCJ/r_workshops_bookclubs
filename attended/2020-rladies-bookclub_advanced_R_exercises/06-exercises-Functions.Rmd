@@ -1,0 +1,7 @@
+---
+title: "Exercises Chapter 5"
+author: "Semiramis Castro-Jaimes"
+date: "5 de junio de 2020"
+output: html_document
+---
+

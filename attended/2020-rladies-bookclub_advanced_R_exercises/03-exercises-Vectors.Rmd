@@ -1,0 +1,81 @@
+---
+title: "Exercises Chapter 3"
+author: "Semiramis Castro-Jaimes"
+date: "21 de abril de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1014)
+```
+
+1. Test your knowledge of the vector coercion rules by predicting the output of the following uses of c():
+```{r}
+c(1, FALSE)
+c("a", 1)
+c(TRUE, 1L)
+
+```
+A: c(1, 1); c("a","1"); c(1L, 1L)
+
+
+
+2. Why is 1 == "1" true? Why is -1 < FALSE true? Why is "one" < 2 false?
+A: Because: numeric is coerced into string; logical into numeric; numeric into string and numbers come before letters when sorted as string
+
+3. Why is the default missing value, NA, a logical vector? What’s special about logical vectors? (Hint: think about c(FALSE, NA_character_).)
+A: because NAs should not change the type of the object, and logicals can be coerced into the other data types
+
+
+
+1. Can you have a data frame with zero rows? What about zero columns?
+```{r}
+a<-data.frame()
+dim(a)
+```
+
+
+2. What happens if you attempt to set rownames that are not unique?
+```{r}
+df<-data.frame(A=letters[1:4], B=letters[2:5])
+rownames(df)<-c(letters[1:3], "a")
+```
+
+
+3. If df is a data frame, what can you say about t(df), and t(t(df))? Perform some experiments, making sure to try different column types.
+```{r}
+df<-data.frame(soup=letters[1:4], 
+               nums=seq_len(4),
+               integers=c(10L, 20L, 30L, 40L),
+               decimals=c(50.5, 60.5, 75.5, 80.8),
+               words=month.abb[5:8],
+               times=c(as.Date("2018-08-01", tz = "GTM"),
+                       as.Date("2019-08-01", tz = "UTC"),
+                       as.Date("1970-02-01", tz = "UTC"),
+                       as.Date("1980-02-01", tz = "GTM")
+                       )
+)
+
+head(df)
+
+```
+
+```{r}
+head(t(df))
+```
+A: Se perdieron los tipos de dato que no eran letras/palabras; todo fue convertido a character
+
+
+4. What does as.matrix() do when applied to a data frame with columns of different types? How does it differ from data.matrix()?
+```{r}
+as.matrix(df)
+```
+A: Todo se convirtió a character
+
+```{r}
+data.matrix(df)
+```
+A: Todo se convirtió a numeric
+
+

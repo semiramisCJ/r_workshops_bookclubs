@@ -1,0 +1,49 @@
+---
+title: "Quizz Chapter 2"
+author: "Semiramis Castro-Jaimes"
+date: "20 de abril de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1014)
+library(lobstr)
+```
+
+## Given the following data frame, how do I create a new column called “3” that contains the sum of 1 and 2? You may only use $, not [[. What makes 1, 2, and 3 challenging as variable names?
+```{r}
+df <- data.frame(runif(3), runif(3))
+names(df) <- c(1, 2)
+```
+
+```{r}
+df$`3`<-rowSums(df)
+df
+```
+
+## In the following code, how much memory does y occupy?
+```{r}
+x <- runif(1e6)
+y <- list(x, x, x)
+```
+```{r}
+res<-c(obj_size(x), obj_size(y))
+res
+```
+Ocupan casi el mismo espacio porque las listas tienen referencias a memoria en lugar de los objetos tal cual
+
+
+## On which line does a get copied in the following example?
+```{r}
+a <- c(1, 5, 3, 2)
+tracemem(a)
+b <- a
+tracemem(b)
+b[[1]] <- 10
+
+```
+"a is copied when b is modified"
+
+
+

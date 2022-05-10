@@ -1,0 +1,107 @@
+---
+title: "Chapter 10 Exercises"
+author: "Semiramis Castro-Jaimes"
+date: "4/8/2020"
+output: html_document
+---
+
+## Base R contains two function factories, approxfun() and ecdf(). Read their documentation and experiment to figure out what the functions do and what they return.
+```{r}
+approxfun
+```
+
+## Create a function pick() that takes an index, i, as an argument and returns a function with an argument x that subsets x with i.
+```{r}
+i<-2
+pick <- function(i) {
+  #force(i)
+  function(x) x[[i]]
+}
+x <- 1:3
+identical(x[[1]], pick(1)(x))
+```
+
+## What happens if you use <- instead of <<-? Make predictions, then verify with the code below.
+With `<-` we don't modify the outer variable, whereas with superassignment we do
+```{r}
+new_counter3 <- function() {
+  i <- 0
+  function() {
+    i <- i + 1
+    i
+  }
+}
+new_counter3()()
+```
+
+## In boot_model(), why don’t I need to force the evaluation of df or model?
+```{r}
+boot_model <- function(df, formula) {
+  mod <- lm(formula, data = df)
+  fitted <- unname(fitted(mod))
+  resid <- unname(resid(mod))
+  rm(mod)
+  function() {
+    fitted + sample(resid)
+  }
+}
+```
+
+Because the variables from the inner function are read from its parent environment, and those variables are declared in that parent environment
+
+## Why might you formulate the Box-Cox transformation like this?
+```{r}
+boxcox3 <- function(x) {
+  function(lambda) {
+    if (lambda == 0) {
+      log(x)
+    } else {
+      (x ^ lambda - 1) / lambda
+    }
+  }  
+}
+```
+Because tThis allows us to apply and test different transformations for different inputs and give them a descriptive name."
+
+## Why don’t you need to worry that boot_permute() stores a copy of the data inside the function that it generates?
+```{r}
+boot_permute <- function(df, var) {
+  n <- nrow(df)
+  force(var)
+  function() {
+    col <- df[[var]]
+    col[sample(n, replace = TRUE)]
+  }
+}
+boot_mtcars1 <- boot_permute(mtcars, "mpg")
+```
+Because the environment of the inner function exists only during its execution and when it finishes, its environment is destroyed
+Also, we are giving it a pointer to the data, not the data itself
+
+## How much time does `ll_poisson2()` save compared to `ll_poisson1()`? Use `bench::mark()` to see how much faster the optimisation occurs. How does changing the length of xchange the results?
+```{r}
+# Definition of ll_poisson1 and ll_poisson2 
+ll_poisson1 <- function(x) {
+  n <- length(x)
+  function(lambda) {
+    log(lambda) * sum(x) - n * lambda - sum(lfactorial(x))
+  }
+}
+ll_poisson2 <- function(x) {
+  n <- length(x)
+  sum_x <- sum(x)
+  c <- sum(lfactorial(x))
+  function(lambda) {
+    log(lambda) * sum_x - n * lambda - c
+  }
+}
+```
+```{r}
+# provided test data
+x1 <- c(41, 30, 31, 38, 29, 24, 30, 29, 31, 38)
+bench::mark(
+  llp1 = optimise(ll_poisson1(x1), c(0, 100), maximum = TRUE),
+  llp2 = optimise(ll_poisson2(x1), c(0, 100), maximum = TRUE)
+)
+```
+We get an improvement in performance with the second function factory because the costly operation (lfactorial) is done only once and its re-used in each function created downstream

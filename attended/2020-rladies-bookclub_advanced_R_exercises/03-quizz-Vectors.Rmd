@@ -1,0 +1,58 @@
+---
+title: "Quizz Chapter 3"
+author: "Semiramis Castro-Jaimes"
+date: "21 de abril de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1014)
+```
+
+1. What are the four common types of atomic vectors? What are the two rare types?
+A: Common types: logical, character, integer & double (numeric); Rare: complex and raw
+
+
+2. What are attributes? How do you get them and set them?
+A: Attributes are special characteristics that can change the behavior of the objects. 
+```{r}
+df<-data.frame(A= as.factor(letters[1:4]),
+               B= runif(4))
+
+df
+```
+
+We can get attributes with:
+```{r}
+attr(df, "names")
+```
+```{r}
+attributes(df)
+```
+```{r}
+str(df)
+```
+
+
+We can set attributes with:
+```{r}
+
+```
+
+
+
+3. How is a list different from an atomic vector? How is a matrix different from a data frame?
+A1: a list can have different items; atomic vectors can only hold a data type. Lists store references to the objects, not the elements per se.
+A2: A matrix is a 2-D object with rows and columns in which all elements are of the same type; data.frames can have columns with distinct data types and their rows and columns are not interchangeable / transposable
+
+
+4. Can you have a list that is a matrix? Can a data frame have a column that is a matrix?
+A1: Yes, we can embed a matrix into a list
+A2: Yes if all columns are also matrices
+
+
+5. How do tibbles behave differently from data frames?
+A: tibbles "complain more and do less"
+Tibbles don't convert strings as factors; tibbles don't support row.names
+

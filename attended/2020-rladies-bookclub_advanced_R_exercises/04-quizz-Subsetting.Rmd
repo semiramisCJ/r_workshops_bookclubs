@@ -1,0 +1,39 @@
+---
+title: "Quizz Chapter 4"
+author: "Semiramis Castro-Jaimes"
+date: "25 de mayo de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. What is the result of subsetting a vector with positive integers, negative integers, a logical vector, or a character vector?
+A: With positive integers we obtain the entries with those indexes, with negative integers we exclude those entries. If we use a logical vector, we obtain the entries in which the value of the logical vector is TRUE
+
+
+2. What’s the difference between [, [[, and $ when applied to a list?
+
+
+3. When should you use drop = FALSE?
+When we want to preserve the object type instead of coercing to a simpler type. For example, if we subset a matrix and want to preserve the one-row result as a matrix type instead of it being converted to an atomic vector that does not have dimensions
+
+
+4. If x is a matrix, what does x[] <- 0 do? How is it different from x <- 0?
+El primer caso asigna a todos los elementos de la matriz el valor de cero
+```{r}
+x<-matrix(1:10, nrow = 2, ncol = 5)
+x[] <- 0
+x
+```
+
+Y en el segundo caso sobreescribe la matriz con un vector de tamaño uno con el valor de cero
+```{r}
+x <- 0
+x
+```
+
+
+5. How can you use a named vector to relabel categorical variables?
+Assigning the names of the vector to the desired column or entry in the categorical data. Or using factor levels.

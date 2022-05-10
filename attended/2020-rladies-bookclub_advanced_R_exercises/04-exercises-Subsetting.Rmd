@@ -1,0 +1,121 @@
+---
+title: "Exercises Chapter 4"
+author: "Semiramis Castro-Jaimes"
+date: "25 de mayo de 2020"
+output: html_document
+---
+
+Fix each of the following common data frame subsetting errors:
+```{r}
+#mtcars[mtcars$cyl = 4, ]
+mtcars[mtcars$cyl == 4, ]
+
+```
+
+```{r}
+#mtcars[-1:4, ]
+mtcars[1:4, ]
+
+```
+
+```{r}
+#mtcars[mtcars$cyl <= 5]
+mtcars[mtcars$cyl <= 5, ]
+```
+
+```{r}
+#mtcars[mtcars$cyl == 4 | 6, ]
+mtcars[mtcars$cyl == 4 | mtcars$cyl == 6, ]
+```
+
+Why does the following code yield five missing values? (Hint: why is it different from x[NA_real_]?)
+```{r}
+x <- 1:5
+x[NA]
+#> [1] NA NA NA NA NA
+```
+A: Porque le dimos un vector, el cual se recicla; y los NAs regresan NAs
+
+
+What does upper.tri() return? How does subsetting a matrix with it work? Do we need any additional subsetting rules to describe its behaviour?
+```{r}
+x <- outer(1:5, 1:5, FUN = "*")
+x[upper.tri(x)]
+```
+
+upper.tri() Nos regresa una matriz lógica para obtener la diagonal superior de la matriz que le dimos 
+"Returns a matrix of logicals the same size of a given matrix with entries TRUE in the lower or upper triangle." 
+No necesitamos reglas adicionales
+```{r}
+upper.tri(x)
+```
+
+
+Why does mtcars[1:20] return an error? How does it differ from the similar mtcars[1:20, ]?
+A: El primer caso da error porque queremos hacer un subset de las primeras 20 columnas cuando en realidad sólo hay 11 columnas (hicimos subsetting como lista). En el segundo caso usamos la notación de matrices, y obtenemos las primeras 20 filas y todas sus columnas
+```{r}
+dim(mtcars)
+```
+```{r}
+mtcars[1:20, ]
+```
+
+Implement your own function that extracts the diagonal entries from a matrix (it should behave like diag(x) where x is a matrix).
+```{r}
+extr_diag<-function(x){
+  #Check if the dimensions are the same, if not, exit with a message
+  if (ncol(x) != nrow(x)) {
+    print("The dimensions of the matrix need to be the same: ncol==nrow")
+    return(NA)
+  }
+  #Pre-allocate a vector that will have size n, where n=ncol(x) (which is the same as nrow(x))
+  #Then iterate through the matrix and extract only the entries where the row_index == column_index
+  #Finally, return the vector with the results
+  res<-vector(length = ncol(x))
+  for (i in seq_along(1:ncol(x))) {
+    res[i]<-x[i,i]
+  }
+  return(res)
+}
+
+x <- matrix(1:9, nrow = 3, ncol = 3)
+x
+```
+```{r}
+#Test code
+extr_diag(x)
+```
+
+
+What does df[is.na(df)] <- 0 do? How does it work?
+A:It assigns a zero in the cells that have NA. 
+First, is.na() returns a logical matrix in this case
+Then, the cells with TRUE are assigned zero as value
+
+
+Given a linear model, e.g., mod <- lm(mpg ~ wt, data = mtcars), extract the residual degrees of freedom. Then extract the R squared from the model summary (summary(mod))
+```{r}
+mod <- lm(mpg ~ wt, data = mtcars)
+str(mod)
+```
+
+```{r}
+mod["residuals"]
+```
+
+```{r}
+res<-summary(mod)
+str(res)
+```
+
+```{r}
+summary(mod)["r.squared"]
+```
+
+
+```{r}
+x1 <- 1:10
+
+```
+
+

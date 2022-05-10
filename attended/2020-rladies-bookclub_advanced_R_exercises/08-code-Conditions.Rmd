@@ -1,0 +1,65 @@
+---
+title: "Code Chapter 8"
+author: "Semiramis Castro-Jaimes"
+date: "23/6/2020"
+output: html_document
+---
+
+#### TryCatch
+```{r}
+
+calculate_log <- function(x) {
+  tryCatch(
+    # We catch the error if it happens and store it in the variable "error"
+    # Here, we also define a return value if there is an error
+    error = function(any_error) NA,
+    
+    # This code will be executed if there are no errors
+    log(x)
+  )
+}
+```
+
+```{r}
+calculate_log_info <- function(x, base = exp(1)) {
+  if (!is.numeric(x)) {
+    abort(paste0(
+      "`x` must be a numeric vector; not ", typeof(x), "."
+    ))
+  }
+  if (!is.numeric(base)) {
+    abort(paste0(
+      "`base` must be a numeric vector; not ", typeof(base), "."
+    ))
+  }
+
+  base::log(x, base = base)
+}
+```
+
+```{r}
+withCallingHandlers(
+  message = function(cnd) cat("Caught a message!\n"), 
+  {
+    
+    message("Someone there?")
+    message("Why, yes!")
+  }
+)
+```
+
+The messages are applied in the order we send them
+```{r}
+withCallingHandlers(
+  # We catch the condition and print to the console
+  message = function(cnd) message("First message -from the top"),
+  {
+    # This code will be executed after catching the condition
+    # After each message, the control will return to the top
+    message("Second message")
+    warning("Ooops! A warning\n")
+    message("Third message!")
+  }
+)
+```
+

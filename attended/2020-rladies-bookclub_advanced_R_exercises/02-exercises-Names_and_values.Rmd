@@ -1,0 +1,168 @@
+---
+title: "Exercises Chapter 2"
+author: "Semiramis Castro-Jaimes"
+date: "20 de abril de 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1014)
+library(lobstr)
+```
+
+## Explain the relationship between a, b, c and d in the following code:
+```{r}
+a <- 1:10
+b <- a
+c <- b
+d <- 1:10
+```
+
+```{r}
+res<-c(obj_addr(a), obj_addr(b), obj_addr(c), obj_addr(d))
+names(res)<-c("a", "b", "c", "d")
+res
+```
+a, b y c apuntan a la misma dirección de memoria
+
+
+## The following code accesses the mean function in multiple ways. Do they all point to the same underlying function object? Verify this with lobstr::obj_addr()
+```{r eval=FALSE}
+mean
+base::mean
+get("mean")
+evalq(mean)
+match.fun("mean")
+```
+
+```{r}
+res<-c(obj_addr(mean), 
+       obj_addr(base::mean),
+       obj_addr(get("mean")), 
+       obj_addr(evalq(mean)), 
+       obj_addr(match.fun("mean"))
+)
+res
+
+```
+Oooohhh, todas sí hacen referencia a la misma dirección de memoria
+
+
+## By default, base R data import functions, like read.csv(), will automatically convert non-syntactic names to syntactic ones. Why might this be problematic? What option allows you to suppress this behaviour?
+A: This might be problematic when we have special caracters. We can suppress this behavior with check.names
+
+
+## What rules does make.names() use to convert non-syntactic names into syntactic ones?
+A: From the function documentation: 'The character "X" is prepended if necessary. All invalid characters are translated to ".". A missing value is translated to "NA". Names which match R keywords have a dot appended to them. Duplicated values are altered by make.unique.'
+
+## I slightly simplified the rules that govern syntactic names. Why is .123e1 not a syntactic name? Read ?make.names for the full details.
+
+A: Because it starts with a dot. It will be prepended with an X:
+```{r}
+make.names(.123e1)
+```
+
+```{r}
+l1 <- list(1, 2, 3)
+l2 <- l1
+l2[[3]] <- 4
+ref(l1, l2)
+```
+
+## Why is tracemem(1:10) not useful?
+
+A: Porque no es un nombre de objeto
+
+
+## Explain why tracemem() shows two copies when you run this code. Hint: carefully look at the difference between this code and the code shown earlier in the section.
+```{r}
+x <- c(1L, 2L, 3L)
+tracemem(x)
+x[[3]] <- 4
+```
+ Supuse que porque se transforma a una lista, pero no
+ Igual y porque accedemos directamente a la dirección de memoria del elemento 3 en lugar de su valor
+```{r}
+ref(x, x[[3]], x[1], x[2], x[3])
+```
+ 
+
+## Sketch out the relationship between the following objects:
+```{r}
+a <- 1:10
+b <- list(a, a)
+c <- list(b, a, 1:10)
+```
+
+```{r}
+ref(a, b, c)
+```
+
+## What happens when you run this code?
+```{r}
+tracemem(x)
+```
+
+```{r}
+x <- list(1:10)
+tracemem(x)
+x[[2]] <- x
+```
+
+```{r}
+ref(x)
+```
+
+
+## In the following example, why are object.size(y) and obj_size(y) so radically different? Consult the documentation of object.size().
+```{r}
+y <- rep(list(runif(1e4)), 100)
+object.size(y)
+```
+```{r}
+obj_size(y)
+
+```
+A: porque object.size() no toma en cuenta los elementos compartidos, y asume que todos los elementos están contiguos
+
+
+## Take the following list. Why is its size somewhat misleading?
+```{r}
+funs <- list(mean, sd, var)
+obj_size(funs)
+```
+A: Porque la lista tiene la referencia de memoria a las referencias de memoria de cada función enlistada
+
+
+## Predict the output of the following code:
+```{r}
+a <- runif(1e6)
+obj_size(a)
+
+b <- list(a, a)
+obj_size(b)
+obj_size(a, b)
+
+b[[1]][[1]] <- 10
+obj_size(b)
+obj_size(a, b)
+
+b[[2]][[1]] <- 10
+obj_size(b)
+obj_size(a, b)
+
+```
+A: Al principio había elementos compartidos, así que pesaban lo mismo, pero con cada modificación dejaron de compartir elementos, y en lugar de apuntar a direcciones de memoria, los elementos de b guardaron valores
+
+
+## Explain why the following code doesn’t create a circular list.
+```{r}
+x <- list()
+tracemem(x)
+x[[1]] <- x
+
+```
+Porque se crea una copia de la lista cuando ésta se modifica
+
+
