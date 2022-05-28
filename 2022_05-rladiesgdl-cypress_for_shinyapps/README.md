@@ -23,7 +23,7 @@ Podemos usar _cualquiera de las 3 opciones_ en el taller.
     - [mac OS](#mac-os)
     - [Windows](#windows)
   - [Descargar una imagen de docker de cypress](#descargar-una-imagen-de-docker-de-cypress)
-    - [Jalar la imagen de la versión que queremos](#jalar-la-imagen-de-la-versión-que-queremos)
+    - [Usar una imagen de docker con cypress y navegadores pre-instalados](#usar-una-imagen-de-docker-con-cypress-y-navegadores-pre-instalados)
 
 
 # Cypress desde el ejecutable rápido (sólo windows y mac OS)
@@ -166,7 +166,33 @@ https://docs.docker.com/desktop/windows/install/
 ## Descargar una imagen de docker de cypress
 Vamos a usar la terminal por conveniencia, pero también se puede hacer desde la interfaz gráfica de Docker desktop.
 
+Podemos descargar distintas versiones de cypress, con o sin navegadores pre-instalados.
 
-### Jalar la imagen de la versión que queremos
+En **cypress/base** tenemos acceso únicamente a cypress, mientras que con **cypress/included** tenemos a cypress y a algunos navegadores (y sus dependencias del sistema).
 
+**Nota** Para correr cypress con un usuario distinto al usuario _root_ puedes consultar los ejemplos disponibles en:
+- https://github.com/cypress-io/cypress-docker-images/tree/master/examples/included-as-non-root
+- https://github.com/cypress-io/cypress-docker-images/tree/master/examples/included-as-non-root
+- https://github.com/cypress-io/cypress-docker-images/tree/master/examples/included-as-non-root-mapped
+
+Sin embargo, en este taller no vamos a cubrir esa parte.
+
+
+### Usar una imagen de docker con cypress y navegadores pre-instalados
+1. Jalar la imagen
+   ```
+   docker pull cypress/included:9.6.1
+   ```
+2. Correr el contenedor y montar el volumen con los tests
+   ```
+   docker run --rm -it -v $PWD/taller_node-quickdefaultdemo/:/taller_node/ -w /taller_node cypress/included:9.6.1
+   ```
+   --rm: Borrar el contenedor en cuanto salgamos de ahí.
+
+   -it: Para correr de manera interactiva.
+   
+   -v: Montar volumen origen_mi_maquina:destino_contenedor
+   
+   -w: Directorio de trabajo en el contenedor
+3. 
  
