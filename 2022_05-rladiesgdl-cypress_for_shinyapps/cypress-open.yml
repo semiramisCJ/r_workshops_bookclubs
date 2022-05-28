@@ -17,7 +17,6 @@ services:
       # then pass the environment variable DISPLAY to show Cypress GUI on the host system
       #   DISPLAY=$IP:0
       - DISPLAY
-      - MODE="compose"
     volumes:
       # for Cypress to communicate with the X11 server pass this socket file
       # in addition to any other mapped volumes

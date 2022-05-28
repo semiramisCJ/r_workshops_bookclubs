@@ -2,10 +2,10 @@
 let mode = process.env.MODE
 
 let url = ""
-if (mode === "compose") {
-  url = "http://movieexplorer:8080/"
-} else {
+if (mode === "other") {
   url = "http://localhost:8080/"
+} else {
+  url = "http://movieexplorer:8080/"  
 }
 
 describe("Tests para la app movie-explorer", () => {
