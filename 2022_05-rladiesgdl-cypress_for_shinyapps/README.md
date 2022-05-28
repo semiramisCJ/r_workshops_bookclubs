@@ -185,7 +185,7 @@ Sin embargo, en este taller no vamos a cubrir esa parte.
    ```
 2. Correr el contenedor y montar el volumen con los tests
    ```
-   docker run --rm -it -v $PWD/taller_node-quickdefaultdemo/:/taller_node/ -w /taller_node cypress/included:9.6.1
+   docker run --rm -it -v $PWD/taller-quickdefaultdemo/:/taller/ -w /taller cypress/included:9.6.1
    ```
    --rm: Borrar el contenedor en cuanto salgamos de ahí.
 
