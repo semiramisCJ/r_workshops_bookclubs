@@ -48,5 +48,9 @@ renv.lock
 node_modules
 package-lock.json
 
+# cypress results
+videos/
+screenshots/
+
 # Pending projects
 2020_09-rladies-latinr_emoji_app/
