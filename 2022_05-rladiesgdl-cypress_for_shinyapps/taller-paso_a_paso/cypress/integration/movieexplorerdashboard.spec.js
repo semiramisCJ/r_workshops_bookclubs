@@ -9,7 +9,7 @@ if (mode === "compose") {
 }
 
 describe("some checks to movie-explorer app", () => {
-  before(() => {
+  beforeEach(() => {
     cy.visit(url, { timeout: 30000 })
   })
 
@@ -18,6 +18,10 @@ describe("some checks to movie-explorer app", () => {
     cy.get("#n_movies").should("contain", 4)
     cy.get("#plot1").should("be.visible").and("not.have.class", "animating")
   })
+
+  // Info sobre como checar los sliderInput
+  // https://docs.cypress.io/api/commands/trigger#Change-Event
+
 
 
 
