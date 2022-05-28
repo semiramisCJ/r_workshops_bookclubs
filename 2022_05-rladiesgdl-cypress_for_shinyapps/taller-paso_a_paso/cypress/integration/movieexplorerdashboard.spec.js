@@ -8,12 +8,12 @@ if (mode === "compose") {
   url = "http://localhost:8080/"
 }
 
-describe("some checks to movie-explorer app", () => {
+describe("Tests para la app movie-explorer", () => {
   beforeEach(() => {
     cy.visit(url, { timeout: 30000 })
   })
 
-  it("we can filter by director", () => {
+  it("Podemos filtrar por quien dirigio la pelicula", () => {
     cy.get("#director").type("Hayao")
     cy.get("#n_movies").should("contain", 4)
     cy.get("#plot1").should("be.visible").and("not.have.class", "animating")
