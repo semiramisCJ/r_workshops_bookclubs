@@ -17,7 +17,7 @@ Podemos usar _cualquiera de las 3 opciones_ en el taller.
     - [Opción 2. Instalar una versión específica de node en ubuntu (por ejemplo, la versión LTS)](#opción-2-instalar-una-versión-específica-de-node-en-ubuntu-por-ejemplo-la-versión-lts)
     - [Opción 3. Instalar node con nvm (node version manager) - También funciona en mac OS](#opción-3-instalar-node-con-nvm-node-version-manager---también-funciona-en-mac-os)
   - [Instalar cypress con node](#instalar-cypress-con-node)
-- [Cypess desde docker](#cypess-desde-docker)
+- [Cypress desde docker](#cypress-desde-docker)
   - [Instrucciones para instalar Docker por Sistema Operativo](#instrucciones-para-instalar-docker-por-sistema-operativo)
     - [Ubuntu](#ubuntu)
     - [mac OS](#mac-os)
@@ -132,7 +132,7 @@ Al correr `npm install <paquete>` se va a crear (o actualizar si ya existe) un a
 
 
 
-# Cypess desde docker
+# Cypress desde docker
 Como pre-requisito, necesitas tener docker instalado, y, de preferencia, una terminal linux.
 
 ## Instrucciones para instalar Docker por Sistema Operativo
