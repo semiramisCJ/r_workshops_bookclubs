@@ -52,7 +52,22 @@ Podemos usar _cualquiera de esas opciones_ en el taller.
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (headless)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-headless)
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (modo interactivo)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-modo-interactivo)
 - [Notas generales sobre cypress](#notas-generales-sobre-cypress)
-- [Recursos para aprender más](#recursos-para-aprender-más)
+- [Recursos para aprender más (en inglés)](#recursos-para-aprender-más-en-inglés)
+  - [Cómo encontrar elementos HTML](#cómo-encontrar-elementos-html)
+    - [Browser developer tools](#browser-developer-tools)
+    - [Otros, via TAU](#otros-via-tau)
+    - [JQuery](#jquery)
+  - [Notas sobre javascript](#notas-sobre-javascript)
+    - [Tutorial de javascript](#tutorial-de-javascript)
+    - [Funciones anónimas y funciones flecha](#funciones-anónimas-y-funciones-flecha)
+    - [Introducción a objetos](#introducción-a-objetos)
+    - [Introducción a async](#introducción-a-async)
+    - [Callbacks](#callbacks)
+  - [Mejores prácticas](#mejores-prácticas)
+    - [Encadenar comandos](#encadenar-comandos)
+  - [Otros detalles técnicos](#otros-detalles-técnicos)
+    - [Chai framework](#chai-framework)
+    - [Mocha framework](#mocha-framework)
 
 
 # Cypress desde el ejecutable rápido (sólo windows y mac OS)
@@ -270,4 +285,55 @@ docker compose -f docker-compose.yml -f cypress-open.yml up --exit-code-from cyp
   https://www.cypress.io/blog/2020/07/08/end-to-end-testing-mobile-apps-with-ionic-and-cypress/
 
 
-# Recursos para aprender más
+# Recursos para aprender más (en inglés)
+## Cómo encontrar elementos HTML
+  ### Browser developer tools 
+  https://javascript.info/debugging-chrome  
+
+  ### Otros, via TAU 
+  https://testautomationu.applitools.com/web-element-locator-strategies/ 
+
+  ### JQuery 
+  https://www.youtube.com/watch?v=8uOgDtTDebA 
+
+
+## Notas sobre javascript
+### Tutorial de javascript
+  https://testautomationu.applitools.com/javascript-tutorial/  
+
+### Funciones anónimas y funciones flecha 
+https://javascript.info/arrow-functions-basics  
+
+### Introducción a objetos
+https://javascript.info/object-basics  
+
+### Introducción a async
+- https://javascript.info/async  
+- https://eloquentjavascript.net/11_async.html  
+
+### Callbacks 
+http://jsforcats.com/#callbacks  
+
+ 
+## Mejores prácticas
+### Encadenar comandos
+   - https://www.toolsqa.com/cypress/cypress-get-command/
+   - https://filiphric.com/writing-better-command-chains-in-cypress
+   - https://docs.cypress.io/api/commands/then#Change-subject
+
+   - Succesful test strategies https://www.youtube.com/watch?v=Qeqk2M6j4-I  
+
+   - Common testing pitfalls and how to avoid them https://www.youtube.com/watch?v=uvJwWQLaVqU  
+
+   - Testing is a good investment https://www.youtube.com/watch?v=_mHy9U0jAG0  
+
+   - Don’t forget accessibility testing https://applitools.com/event/ux-testing-in-agile-teams/  
+
+
+## Otros detalles técnicos
+  ### Chai framework 
+  https://testautomationu.applitools.com/chai-test-assertions/  
+
+  ### Mocha framework 
+  https://testautomationu.applitools.com/mocha-javascript-tests/ 
+
