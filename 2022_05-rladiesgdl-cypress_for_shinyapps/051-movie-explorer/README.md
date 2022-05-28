@@ -1,15 +1,45 @@
-This is the source code for a movie explorer app which runs on R and Shiny. The data is a subset of data from [OMDb](http://www.omdbapi.com/), which in turn is from IMDb and Rotten Tomatoes. The data is saved in a SQLite database.
+# Notes
+The original code comes from RStudio shiny demos https://github.com/rstudio/shiny-examples/tree/main/051-movie-explorer
 
-To run it locally, you'll need to install the latest versions of [ggvis](http://ggvis.rstudio.com), [Shiny](http://shiny.rstudio.com), and [dplyr](https://github.com/hadley/dplyr), as well as [RSQLite](http://cran.r-project.org/web/packages/RSQLite/index.html).
+You can know more about the app in README_original.md
 
-```r
-install.packages(c('shiny', 'ggvis', 'dplyr', 'RSQLite'))
+
+# How to run the movie-explorer shiny app
+To run this shinyapp, you can install the packages in your local environment, either via conda, with packrat, etc, or you can build the Docker image and run the app inside a docker container.
+
+## Local mode
+### Install R dependencies
+```
+install.packages(c('shiny', 'ggvis', 'dplyr', 'dbplyr', 'RSQLite'))
 ```
 
-You may need to restart R to make sure the newly-installed packages work properly.
+### Launch app
+a. Click Run in RStudio or
 
-After all these packages are installed, you can run this app by entering the directory, and then running the following in R:
+b. Inside an R console, run
+```
+options(shiny.port = 8080, shiny.host='0.0.0.0')
 
-```s
 shiny::runApp()
 ```
+
+## With docker
+### Build docker image
+a. If you are inside the `051-movie-explorer` directory
+
+```
+docker build . -t movieexplorer
+```
+
+b. If you are in another directory and prefer not to change directories, you would need to provide the path to the Dockerfile
+```
+docker build --file otro_path/051-movie-explorer/ -t movieexplorer
+```
+
+### Run container
+```
+docker run --rm -it -p 8080:8080 movieexplorer
+```
+
+## Visit your app in the browser
+Open your favorite web browser and go to `http://localhost:8080/`
