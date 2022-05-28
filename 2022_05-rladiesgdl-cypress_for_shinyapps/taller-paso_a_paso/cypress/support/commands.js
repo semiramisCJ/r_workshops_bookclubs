@@ -12,6 +12,6 @@
 
 
 Cypress.Commands.add("verifyOutput", (expected) => {
-    cy.get("#n_movies").should("contain", expected)
+    cy.get("#n_movies", { timeout: 10000 }).should("contain", expected)
     cy.get("#plot1").should("be.visible").and("not.have.class", "animating")
 })
