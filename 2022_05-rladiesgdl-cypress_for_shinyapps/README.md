@@ -1,9 +1,24 @@
-# Instrucciones de instalación de software para el taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.
+# Taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.
 
 # Nota importante antes de empezar
 Es altamente recomendable que pruebes aplicaciones en un entorno 'local' u _offline_ para que no satures los servicios de alguien más, y que tampoco te vayan a bloquear. Lo ideal es que si vas a probar aplicaciones que ya están en línea, tengas la autorización de las personas correspondientes y que puedan trabajar en conjunto para no tener interrupciones inesperadas en el servicio.
 
-Ahora sí:
+# Introducción
+Ventajas de cypress:
+- Puedes probar shinyapps y cualquier otra aplicación web, independientemente de con qué fue escrita, pues todas terminan siendo archivos html, y con cypress buscamos elementos en el código html y verificamos si nuestros supuestos son ciertos.
+- Podemos correr tests de manera interactiva
+- Nos obligamos a tener un código más limpio y adoptar convenciones en la shiny app para que las pruebas sean menos complicadas.
+- La escritura de las pruebas es declarativa: "Entra a A, haz click en X, escribe en Z", etc., lo cual las hace más fáciles de entender.
+- Podemos administrar las versiones de cypress de manera independiente de la versión de R con la que estemos trabajando.
+
+
+Desventajas:
+- Nuestro código de esas pruebas no está escrito en R. Usamos javascript, promesas (asincronía). Esto puede ser una barrera para algunas personas.
+- A veces es complicado encontrar el elemento html 'correcto' para probar una determinada acción. Esto se agrava con librerías como shiny que producen elementos muy anidados, pues a veces puede ser difícil distinguir cuál elemento es el que nos lleva a nuestro objetivo.
+- Si nuestra app es complicada, y por ende el html también lo es, el testing se puede volver muy pesado. Sin embargo, hay herramientas para hacer pruebas visuales, ya sea que usemos comparaciones estrictas de screenshots o que trabajemos con tecnología de visión por computadora (hay open source y hay servicios de paga como Eyes de Applitools y Percy)
+
+
+Ahora sí, van las instrucciones de instalación:
 **Para correr cypress tenemos varias opciones**: 
 - desde el ejecutable rápido (es la manera más sencilla, pero viene con características limitadas),
 - desde una terminal con node o 
@@ -13,8 +28,9 @@ Podemos usar _cualquiera de esas opciones_ en el taller.
 
 -----
 **Tabla de contenido**
-- [Instrucciones de instalación de software para el taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.](#instrucciones-de-instalación-de-software-para-el-taller-cypress-para-shinyapps-con-rladies-guadalajara-mayo-2022)
+- [Taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.](#taller-cypress-para-shinyapps-con-rladies-guadalajara-mayo-2022)
 - [Nota importante antes de empezar](#nota-importante-antes-de-empezar)
+- [Introducción](#introducción)
 - [Cypress desde el ejecutable rápido (sólo windows y mac OS)](#cypress-desde-el-ejecutable-rápido-sólo-windows-y-mac-os)
 - [Cypress desde node](#cypress-desde-node)
   - [Instalar node desde el ejecutable (todas las plataformas)](#instalar-node-desde-el-ejecutable-todas-las-plataformas)
@@ -36,6 +52,7 @@ Podemos usar _cualquiera de esas opciones_ en el taller.
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (headless)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-headless)
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (modo interactivo)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-modo-interactivo)
 - [Notas generales sobre cypress](#notas-generales-sobre-cypress)
+- [Recursos para aprender más](#recursos-para-aprender-más)
 
 
 # Cypress desde el ejecutable rápido (sólo windows y mac OS)
@@ -242,9 +259,15 @@ docker compose -f docker-compose.yml -f cypress-open.yml up --exit-code-from cyp
   1. *interactivo*: Se abre una ventana del navegador (y también una ventana del _runner_ de cypress). Vemos paso a paso lo que sucede, tanto si fallan como si son exitosos los tests. 
   2. *"headless"*: Sólo vemos el output en la consola/terminal. Una gran ventaja es que podemos tener un _exit code_ distinto a cero si alguno de los tests fallaron, lo cual es una bandera muy útil en ciertos casos de uso. Dependiendo de nuestra configuración podemos tener registro o no de los tests exitosos, o conservar los videos y screenshots únicamente de los tests fallidos.
     
-- Podemos elegir con qué navegador o navegadores vamos a hacer las pruebas:
+- Podemos elegir con qué navegador o navegadores vamos a hacer las pruebas. Cabe señalar que necesitas tener los navegadores previamente instalados, ya sea en tu computadora o en un contenedor de docker, depende de cómo decidas correr cypress.
   ```
   cypress run --browser chrome
   cypress run --browser firefox
   cypress run --browser edge
   ```
+
+- Además, podemos probar con distintos tamaños de dispositivos, como si realmente los tuviéramos. Esto se vuelve especialmente relevante para aplicaciones móviles.
+  https://www.cypress.io/blog/2020/07/08/end-to-end-testing-mobile-apps-with-ionic-and-cypress/
+
+
+# Recursos para aprender más
