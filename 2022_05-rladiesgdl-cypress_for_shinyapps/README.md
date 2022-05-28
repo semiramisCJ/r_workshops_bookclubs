@@ -194,5 +194,5 @@ Sin embargo, en este taller no vamos a cubrir esa parte.
    -v: Montar volumen origen_mi_maquina:destino_contenedor
    
    -w: Directorio de trabajo en el contenedor
-3. 
+
  
