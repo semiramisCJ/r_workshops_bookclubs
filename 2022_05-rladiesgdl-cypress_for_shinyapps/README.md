@@ -1,14 +1,20 @@
-Instrucciones de instalación de software para el taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.
+# Instrucciones de instalación de software para el taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.
 
+# Nota importante antes de empezar
+Es altamente recomendable que pruebes aplicaciones en un entorno 'local' u _offline_ para que no satures los servicios de alguien más, y que tampoco te vayan a bloquear. Lo ideal es que si vas a probar aplicaciones que ya están en línea, tengas la autorización de las personas correspondientes y que puedan trabajar en conjunto para no tener interrupciones inesperadas en el servicio.
+
+Ahora sí:
 **Para correr cypress tenemos varias opciones**: 
 - desde el ejecutable rápido (es la manera más sencilla, pero viene con características limitadas),
 - desde una terminal con node o 
-- desde un contenedor de docker.
+- desde un contenedor de docker (o con docker compose).
 
-Podemos usar _cualquiera de las 3 opciones_ en el taller.
+Podemos usar _cualquiera de esas opciones_ en el taller.
 
 -----
 **Tabla de contenido**
+- [Instrucciones de instalación de software para el taller "Cypress para shinyapps" con Rladies Guadalajara, Mayo 2022.](#instrucciones-de-instalación-de-software-para-el-taller-cypress-para-shinyapps-con-rladies-guadalajara-mayo-2022)
+- [Nota importante antes de empezar](#nota-importante-antes-de-empezar)
 - [Cypress desde el ejecutable rápido (sólo windows y mac OS)](#cypress-desde-el-ejecutable-rápido-sólo-windows-y-mac-os)
 - [Cypress desde node](#cypress-desde-node)
   - [Instalar node desde el ejecutable (todas las plataformas)](#instalar-node-desde-el-ejecutable-todas-las-plataformas)
@@ -29,6 +35,7 @@ Podemos usar _cualquiera de las 3 opciones_ en el taller.
     - [Otros sistemas operativos](#otros-sistemas-operativos)
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (headless)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-headless)
   - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (modo interactivo)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-modo-interactivo)
+- [Notas generales sobre cypress](#notas-generales-sobre-cypress)
 
 
 # Cypress desde el ejecutable rápido (sólo windows y mac OS)
@@ -228,3 +235,16 @@ Si queremos correr cypress en modo interactivo, usamos dos archivos para el dock
 xhost +local:
 docker compose -f docker-compose.yml -f cypress-open.yml up --exit-code-from cypress
 ```
+
+# Notas generales sobre cypress
+
+- Hay dos modos de correr cypress: 
+  1. *interactivo*: Se abre una ventana del navegador (y también una ventana del _runner_ de cypress). Vemos paso a paso lo que sucede, tanto si fallan como si son exitosos los tests. 
+  2. *"headless"*: Sólo vemos el output en la consola/terminal. Una gran ventaja es que podemos tener un _exit code_ distinto a cero si alguno de los tests fallaron, lo cual es una bandera muy útil en ciertos casos de uso. Dependiendo de nuestra configuración podemos tener registro o no de los tests exitosos, o conservar los videos y screenshots únicamente de los tests fallidos.
+    
+- Podemos elegir con qué navegador o navegadores vamos a hacer las pruebas:
+  ```
+  cypress run --browser chrome
+  cypress run --browser firefox
+  cypress run --browser edge
+  ```
