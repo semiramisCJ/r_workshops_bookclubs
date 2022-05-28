@@ -22,7 +22,7 @@ describe("some checks to movie-explorer app", () => {
   // Info sobre como checar los sliderInput
   // https://docs.cypress.io/api/commands/trigger#Change-Event
 
-
-
+  // Opiniones sobre page-objects
+  // https://www.cypress.io/blog/2019/01/03/stop-using-page-objects-and-start-using-app-actions/
 
 })
