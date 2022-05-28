@@ -24,6 +24,11 @@ Podemos usar _cualquiera de las 3 opciones_ en el taller.
     - [Windows](#windows)
   - [Descargar una imagen de docker de cypress](#descargar-una-imagen-de-docker-de-cypress)
     - [Usar una imagen de docker con cypress y navegadores pre-instalados](#usar-una-imagen-de-docker-con-cypress-y-navegadores-pre-instalados)
+  - [Instalar docker compose](#instalar-docker-compose)
+    - [Ubuntu](#ubuntu-1)
+    - [Otros sistemas operativos](#otros-sistemas-operativos)
+  - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (headless)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-headless)
+  - [Usar docker compose para correr en paralelo cypress y la shiny app desde docker (modo interactivo)](#usar-docker-compose-para-correr-en-paralelo-cypress-y-la-shiny-app-desde-docker-modo-interactivo)
 
 
 # Cypress desde el ejecutable rápido (sólo windows y mac OS)
@@ -179,6 +184,8 @@ Sin embargo, en este taller no vamos a cubrir esa parte.
 
 
 ### Usar una imagen de docker con cypress y navegadores pre-instalados
+Este ejemplo usa una app que está en la web (usa uno de los demos de cypress), así que no tendremos problema en encontrar la shiny app. 
+
 1. Jalar la imagen
    ```
    docker pull cypress/included:9.6.1
@@ -195,4 +202,29 @@ Sin embargo, en este taller no vamos a cubrir esa parte.
    
    -w: Directorio de trabajo en el contenedor
 
- 
+Nota: si corremos la shiny app en local y cypress desde un contenedor de docker, habrá que usar docker compose.
+
+## Instalar docker compose
+
+### Ubuntu
+```
+sudo apt-get update
+sudo apt-get install docker-compose-plugin
+```
+
+### Otros sistemas operativos
+https://docs.docker.com/compose/install/
+
+
+## Usar docker compose para correr en paralelo cypress y la shiny app desde docker (headless)
+```
+docker compose up --exit-code-from cypress
+```
+
+## Usar docker compose para correr en paralelo cypress y la shiny app desde docker (modo interactivo)
+Si queremos correr cypress en modo interactivo, usamos dos archivos para el docker compose
+
+```
+xhost +local:
+docker compose -f docker-compose.yml -f cypress-open.yml up --exit-code-from cypress
+```
